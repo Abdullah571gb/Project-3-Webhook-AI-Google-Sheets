@@ -1,0 +1,301 @@
+{
+  "name": "Project 3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aafb2d57-34e3-4278-93c1-1873a2c7ffb1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "f08bc92e-4473-4bcb-95d0-5540471209bd",
+      "name": "Webhook",
+      "webhookId": "aafb2d57-34e3-4278-93c1-1873a2c7ffb1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.name }}\n{{ $json.body.email }}\n{{ $json.body.company }}\n{{ $json.body.budget }}\n{{ $json.body.message }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a lead qualification assistant. Analyze the information provided and determine: 1. Whether this is a qualified lead (Yes/No) 2. The reason for your decision 3. Recommended next action  Return ONLY JSON: {   \"qualified\": \"\",   \"reason\": \"\",   \"next_action\": \"\" }"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        240,
+        -16
+      ],
+      "id": "7299e88e-9515-4d23-90dd-42e033e60a60",
+      "name": "Basic LLM Chain",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1hdkkJdNZMenaPdC5WtwaQMAvPeiH2Z4zulwio1y8oZU",
+          "mode": "list",
+          "cachedResultName": "Project3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hdkkJdNZMenaPdC5WtwaQMAvPeiH2Z4zulwio1y8oZU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hdkkJdNZMenaPdC5WtwaQMAvPeiH2Z4zulwio1y8oZU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Webhook').item.json.body.name }}",
+            "Date": "={{ $now.toFormat('MMMM dd, yyyy') }}",
+            "Qualified": "={{ JSON.parse($json.text).qualified }}",
+            "Email": "={{ $('Webhook').item.json.body.email }}",
+            "Next Action": "={{ JSON.parse($json.text).next_action }}",
+            "Reason": "={{ JSON.parse($json.text).reason }}",
+            "Message": "={{ $('Webhook').item.json.body.message }}"
+          },
+          "matchingColumns": [
+            "next"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Qualified",
+              "displayName": "Qualified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Action",
+              "displayName": "Next Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        0
+      ],
+      "id": "d1e0154e-2ea6-45c4-a792-ba173732fc43",
+      "name": "Append row in sheet",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4qlLr15r9SPl0mVK",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2f2848a4-0400-4e03-ae1c-8f92ddeb6eae",
+              "leftValue": "={{ $json.body }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        16,
+        0
+      ],
+      "id": "ca8c9737-a011-499d-a652-9d7fcec866d8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        176,
+        192
+      ],
+      "id": "230985b4-ee71-4985-80da-cba51796d221",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "jmSNvrcJh5Ro8fPq",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Karachi",
+    "errorWorkflow": "DSo1gCyMwj92y5Cy"
+  },
+  "versionId": "aac9117f-02e1-49c2-8794-0e9cce95ab7b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "721cf6432c0f21dd1d3df6b8b81cb1ad833f6cd71ef46123545371f59d776c6e"
+  },
+  "nodeGroups": [],
+  "id": "sDWh38MxjacQTMHW",
+  "tags": [
+    {
+      "updatedAt": "2026-07-16T05:14:37.245Z",
+      "createdAt": "2026-07-16T05:14:37.245Z",
+      "id": "QeWBE1Ht00WP8nNM",
+      "name": "Webhook AI Processor"
+    }
+  ]
+}
