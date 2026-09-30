@@ -25,7 +25,7 @@ This demonstrates real-time, event-driven automation instead of manual or schedu
 |------|---------|
 | **n8n** | Workflow automation |
 | **Webhook** | Receives external data (event-driven trigger) |
-| **Groq API (llama-3.3-70b-versatile)** | AI processing of incoming data |
+| **Groq API (openai/gpt-oss-20b)** | AI processing of incoming data |
 | **Google Sheets** | Logs AI responses automatically |
 
 ---
